@@ -116,6 +116,77 @@ Exit:
 
 IterativeMax:
     #TODO: write your code here, $a0 stores the address of the array, $a1 stores the length of the array
-
-    # Do not remove this line
-    jr      $ra
+    addiu $sp, $sp, -20
+    sw $s0, 0($sp)  #address of the array
+    sw $s1, 4($sp)  #length of the array
+    sw $s2, 8($sp)  #loop counter
+    sw $s3, 12($sp)  #maximum
+    sw $ra, 16($sp)
+    
+    move $s0, $a0
+    move $s1, $a1
+    li $s2, 0
+    lw $s3, 0($s0)  #initialize maximum to first element
+    
+    loop:
+    	bge $s2, $s1, return_main
+    	lw $t0, 0($s0)  #put current value of array in t0 to compare to the maximum
+    	addi $s0, $s0, 4
+    	addi $s2, $s2, 1
+    	#print the current value of the array
+    	li $v0, 1
+    	move $a0, $t0
+    	syscall
+    	
+    	#check if current is greater than max
+	bgt $t0, $s3, newMax
+		
+	#print new line
+	li $v0, 4
+	la $a0, newline
+	syscall	
+		
+	#print the max
+	li $v0, 1
+	move $a0, $s3
+	syscall
+	
+	jal ConventionCheck
+    	
+        j loop
+                
+return_main:
+    	lw $ra, 16($sp)  
+    	lw $s3, 12($sp)  
+    	lw $s2, 8($sp)  
+    	lw $s1, 4($sp)  
+    	lw $s0, 0($sp)
+    	addiu $sp, $sp, 20
+    	
+    	jr $ra
+    	
+    	
+newMax:
+	move $s3, $t0
+	
+	#print new line
+	li $v0, 4
+	la $a0, newline
+	syscall	
+		
+	#print the max
+	li $v0, 1
+	move $a0, $s3
+	syscall
+	
+	jal ConventionCheck
+    	
+        j loop
+	
+	
+	
+	
+	
+	
+	
+	
